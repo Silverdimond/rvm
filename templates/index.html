@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Bin Pro</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=2.0, maximum-scale=2.0, user-scalable=no">
+    <script src="socket.io.js"></script>
+    <style>
+        :root { --danger: #f44336; --success: #4CAF50; --bg: #121212; --accent: #2196F3; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; text-align: center; margin: 0; padding: 20px; }
+        
+        .view { display: none; height: 90vh; flex-direction: column; justify-content: center; align-items: center; }
+        .active { display: flex; }
+
+        .card { background: #1e1e1e; border-radius: 25px; padding: 30px; width: 85%; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid #333; }
+        
+        /* Point Counter Style */
+        .points-badge { background: var(--accent); color: white; padding: 10px 30px; border-radius: 50px; font-size: 1.5em; font-weight: bold; margin-bottom: 15px; display: inline-block; }
+        
+        .cross { font-size: 120px; color: var(--danger); animation: pop 0.4s; }
+        .timer { font-size: 1.1em; color: #888; margin-bottom: 10px; }
+        
+        .btn-guest { background: transparent; color: #888; border: 2px solid #444; padding: 15px; width: 85%; border-radius: 15px; font-size: 1.2em; margin-top: 20px; cursor: pointer; }
+        .btn-finish { background: var(--success); color: white; border: none; padding: 20px; width: 100%; border-radius: 15px; font-size: 1.5em; margin-top: 20px; }
+        
+        @keyframes pop { from { transform: scale(0); } to { transform: scale(1); } }
+        .banner-container {
+        width: 100%;
+        height: 510px;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 20px;
+        border-radius: 15px;
+    }
+
+   .banner-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Change 'cover' to 'contain' */
+    background-size: contain; 
+    /* Ensures the image doesn't repeat if it's smaller than the box */
+    background-repeat: no-repeat; 
+    background-position: center;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+    .banner-slide.active-banner {
+        opacity: 1;
+    }
+    </style>
+</head>
+<body>
+
+    <div id="view-maintenance" class="view">
+        <h1 style="font-size: 5em;">⚠️</h1>
+        <h2>OUT OF SERVICE</h2>
+        <p>Connecting to camera system...</p>
+    </div>
+
+    <div id="view-login" class="view">
+    <div class="banner-container">
+        <div class="banner-slide active-banner" style="background-image: url('/static/banner1.svg');"></div>
+        <div class="banner-slide" style="background-image: url('/static/banner2.svg');"></div>
+        <div class="banner-slide" style="background-image: url('/static/banner3.svg');"></div>
+    </div>
+
+    <h1 style="font-size: 3em; margin: 0;">Hello!</h1>
+    <p style="color: #888;">Ready to recycle?</p>
+    
+    <div class="card">
+        <p>Scan your <b>User ID</b></p>
+        <div style="font-size: 4em;">🪪</div>
+    </div>
+  
+   <button class="btn-guest" onclick="startGuest()">Donate 1</button>
+    <button class="btn-guest" onclick="startGuest()">Donate 2</button>
+    <button class="btn-guest" onclick="startGuest()">Donate 3</button>
+
+</div>
+
+    <div id="view-scan" class="view">
+        <div id="timer" class="timer">Session ends in: 05:00</div>
+        
+        <div class="points-badge">Points: <span id="point-count">0</span></div>
+
+        <div id="display-area" style="flex-grow: 1; display: flex; align-items: center; width: 100%; justify-content: center;">
+            <div class="card" id="current-card">
+                <h2>READY TO SCAN</h2>
+                <p>Insert your first bottle</p>
+            </div>
+        </div>
+        
+        <button class="btn-finish" onclick="resetSession()">FINISH</button>
+    </div>
+    <div id="view-summary" class="view">
+    <h1 style="font-size: 4em;">🎉</h1>
+    <h1 style="color: var(--success); font-size: 3em; margin: 0;">THANK YOU!</h1>
+    
+    <div class="card" style="margin-top: 30px;">
+        <p class="label">Total Points Earned</p>
+        <div style="font-size: 5em; font-weight: bold; color: var(--accent);" id="final-points">0</div>
+        
+        <div id="user-msg" style="margin-top: 20px; padding: 15px; background: #222; border-radius: 10px; display: none;">
+            ✅ Points have been added to your account!
+        </div>
+    </div>
+</div>
+    <script>
+        const socket = io();
+        let countdownInterval;
+        let timeLeft = 300;
+
+        function showView(viewId) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+        }
+
+        socket.on('status_ping', (data) => {
+            const isMaint = document.getElementById('view-maintenance').classList.contains('active');
+            if (data.camera === 'offline') {
+                showView('view-maintenance');
+            } else if (isMaint) {
+                showView('view-login');
+            }
+        });
+
+        socket.on('login_success', (data) => {
+            showView('view-scan');
+            startTimer();
+        });
+
+        // When the client (re)connects, the server can send us the
+        // current session so we can restore the UI state.
+        socket.on('restore_state', (data) => {
+            if (!data || !data.user_id) {
+                // No active session on the server – stay on login view
+                return;
+            }
+
+            // Restore points and remaining time
+            document.getElementById('point-count').innerText = data.points ?? 0;
+            timeLeft = (typeof data.time_left === 'number' && data.time_left > 0)
+                ? data.time_left
+                : 300;
+
+            showView('view-scan');
+            startTimer(timeLeft);
+        });
+
+        socket.on('new_item', (data) => {
+            resetTimer(); 
+            const area = document.getElementById('current-card');
+            
+            if (data.accepted) {
+                document.getElementById('point-count').innerText = data.total_points;
+                area.innerHTML = `
+                    <h3 style="color:var(--success)">+1 POINT</h3>
+                    <h1 style="margin: 10px 0;">${data.name}</h1>
+                    <p style="color: #666;">${data.barcode}</p>
+                `;
+            } else {
+                area.innerHTML = `
+                    <div class="cross">✕</div>
+                    <h2 style="color:var(--danger)">NOT ACCEPTED</h2>
+                    <div style="background: white; color: black; padding: 15px; border-radius: 10px; font-weight: bold; margin: 10px 0;">
+                        PLEASE REMOVE BOTTLE
+                    </div>
+                `;
+            }
+        });
+
+        socket.on('session_end', () => {
+            clearInterval(countdownInterval);
+            location.reload();
+        });
+
+        function startTimer(initialSeconds) {
+            // Clear any existing timer to prevent overlapping intervals
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+
+            timeLeft = (typeof initialSeconds === 'number' && initialSeconds > 0)
+                ? initialSeconds
+                : 300;
+
+            countdownInterval = setInterval(() => {
+                timeLeft--;
+                let mins = Math.floor(timeLeft / 60);
+                let secs = timeLeft % 60;
+                document.getElementById('timer').innerText =
+                    `Session ends in: ${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    fetch('/reset', {method: 'POST'});
+                }
+            }, 1000);
+        }
+
+        function resetTimer() { timeLeft = 300; }
+        
+        function startGuest() {
+            fetch('/start_guest', {method: 'POST'});
+        }
+
+       let isGuest = true;
+
+socket.on('login_success', (data) => {
+    isGuest = (data.user_id === 'GUEST');
+    showView('view-scan');
+    startTimer();
+});
+
+socket.on('show_summary', (data) => {
+    // Stop the session timer
+    clearInterval(countdownInterval);
+    
+    // Set summary data
+    document.getElementById('final-points').innerText = data.points;
+    const msg = document.getElementById('user-msg');
+    
+    // Only show the account message if NOT a guest
+    msg.style.display = data.is_guest ? 'none' : 'block';
+
+    showView('view-summary');
+
+    // Wait 5 seconds then reload back to login screen
+    setTimeout(() => {
+        location.reload();
+    }, 5000);
+});
+
+function resetSession() {
+    // We call reset, which triggers the 'show_summary' socket event above
+    fetch('/reset', {method: 'POST'});
+}function startBanners() {
+    const slides = document.querySelectorAll('.banner-slide');
+    let currentSlide = 0;
+
+    if (slides.length === 0) return;
+
+    setInterval(() => {
+        slides[currentSlide].classList.remove('active-banner');
+        currentSlide = (currentSlide + 1) % slides.length;
+        slides[currentSlide].classList.add('active-banner');
+    }, 5000); // Change banner every 5 seconds
+}
+
+// Call this at the very bottom of your script
+        showView('view-login');
+startBanners();
+
+    </script>
+</body>
+</html>

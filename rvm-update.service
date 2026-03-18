@@ -1,0 +1,9 @@
+[Unit]
+Description=Git Update Service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /home/silver/barcode-scanner/update.sh
+User=silver
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,15 @@
+#/etc/systemd/system/rvm-server.service
+[Unit]
+Description=Reverse Vending machine
+After=network.target
+
+[Service]
+ExecStart=/home/silver/barcode-scanner/myenv/bin/python /home/silver/barcode-scanner/server.py
+WorkingDirectory=/home/silver/barcode-scanner
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=silver
+
+[Install]
+WantedBy=multi-user.target
