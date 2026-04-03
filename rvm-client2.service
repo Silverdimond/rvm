@@ -3,6 +3,8 @@
 Description=Reverse Vending machine Actuator
 After=network.target rvm-server.service
 Requires=rvm-server.service
+StartLimitIntervalSec=0
+StartLimitBurst=0
 [Service]
 ExecStart=/home/silver/barcode-scanner/myenv/bin/python /home/silver/barcode-scanner/client2.py
 WorkingDirectory=/home/silver/barcode-scanner
@@ -10,6 +12,7 @@ StandardOutput=inherit
 StandardError=inherit
 Restart=always
 User=silver
-
+Restart=always
+RestartSec=5
 [Install]
 WantedBy=multi-user.target

@@ -2,13 +2,15 @@
 [Unit]
 Description=Reverse Vending machine
 After=network.target
-
+StartLimitIntervalSec=0
+StartLimitBurst=0
 [Service]
 ExecStart=/home/silver/barcode-scanner/myenv/bin/python /home/silver/barcode-scanner/server.py
 WorkingDirectory=/home/silver/barcode-scanner
 StandardOutput=inherit
 StandardError=inherit
 Restart=always
+RestartSec=5s
 User=silver
 
 [Install]
