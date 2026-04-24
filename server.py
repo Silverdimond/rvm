@@ -26,6 +26,7 @@ SESSION_TIMEOUT = 300  # 5 minutes
 def timeout_monitor():
     global current_user, session_items
     while True:
+        socketio.sleep(1)
         if current_user and (time.time() - last_activity > SESSION_TIMEOUT):
             print(f"Session for {current_user} timed out.")
             current_user = None
@@ -34,7 +35,6 @@ def timeout_monitor():
         
         camera_status = "online" if (time.time() - camera_last_seen < 10) else "offline"
         socketio.emit('status_ping', {'camera': camera_status})
-        time.sleep(1)
 
 @app.route('/static/<path:path>')
 def send_static(path):
@@ -54,7 +54,7 @@ def heartbeat():
     camera_last_seen = time.time()
     return jsonify({"status": "received"}), 200
 
-current_user = None
+
 session_points = 0
 
 @socketio.on('connect')
@@ -124,5 +124,5 @@ def reset():
     return jsonify({"status": "reset"}), 200
 
 if __name__ == '__main__':
-    threading.Thread(target=timeout_monitor, daemon=True).start()
+    socketio.start_background_task(timeout_monitor)
     socketio.run(app, host='0.0.0.0', port=5000)

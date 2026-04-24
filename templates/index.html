@@ -187,7 +187,10 @@ window.onload = function() {
     </div>
 </div>
     <script>
-        const socket = io();
+        const socket = io({
+    reconnectionAttempts: Infinity,
+    reconnectionDelay: 2000, // Wait 2 seconds between tries
+});
         let countdownInterval;
         let timeLeft = 300;
 
@@ -205,10 +208,7 @@ window.onload = function() {
             }
         });
 
-        socket.on('login_success', (data) => {
-            showView('view-scan');
-            startTimer();
-        });
+        
 
         // When the client (re)connects, the server can send us the
         // current session so we can restore the UI state.
@@ -252,9 +252,15 @@ window.onload = function() {
 });
 
         socket.on('session_end', () => {
-            clearInterval(countdownInterval);
-            location.reload();
-        });
+    // Only reload if we are currently in an active scan or summary view
+    const isScan = document.getElementById('view-scan').classList.contains('active');
+    const isSummary = document.getElementById('view-summary').classList.contains('active');
+    
+    if (isScan || isSummary) {
+        clearInterval(countdownInterval);
+        location.reload();
+    }
+});
 
         function startTimer(initialSeconds) {
             // Clear any existing timer to prevent overlapping intervals
@@ -293,6 +299,7 @@ socket.on('login_success', (data) => {
     showView('view-scan');
     startTimer();
 });
+
 
 socket.on('show_summary', (data) => {
     // Stop the session timer
