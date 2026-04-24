@@ -87,7 +87,7 @@ def scan():
 
     bottle = accepted_bottles.get(barcode)
     
-    if bottle and "сталко" not in bottle.lower():
+    if bottle and "стакло" not in bottle.lower():
         session_points += 1
         item = {
             "name": bottle,
