@@ -51,14 +51,91 @@
     .banner-slide.active-banner {
         opacity: 1;
     }
+    .lang-switch {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+.lang-btn {
+    background: #333;
+    color: white;
+    border: 1px solid #555;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
     </style>
+    <script>
+    const i18n = {
+    en: {
+        maint_title: "OUT OF SERVICE",
+        maint_desc: "Connecting to camera system...",
+        login_hello: "Hello!",
+        login_ready: "Ready to recycle?",
+        login_scan: "Scan your <b>User ID</b>",
+        btn_donate: "Donate",
+        scan_timer: "Session ends in:",
+        scan_points: "Points:",
+        scan_ready: "READY TO SCAN",
+        scan_insert: "Insert your first bottle",
+        scan_accepted: "+1 POINT",
+        scan_rejected: "NOT ACCEPTED",
+        scan_remove: "PLEASE REMOVE BOTTLE",
+        btn_finish: "FINISH",
+        summary_thanks: "THANK YOU!",
+        summary_total: "Total Points Earned",
+        summary_success: "✅ Points have been added to your account!",
+        or:"or donate:"
+    },
+    mk: {
+        maint_title: "ДЕФЕКТ",
+        maint_desc: "Поврзување со системот за камери...",
+        login_hello: "Здраво!",
+        login_ready: "Подготвени за рециклирање?",
+        login_scan: "Скенирајте ја вашата <b>ID картичка</b>",
+        btn_donate: "Донирај",
+        scan_timer: "Сесијата завршува за:",
+        scan_points: "Поени:",
+        scan_ready: "ПОДГОТВЕНО ЗА СКЕНИРАЊЕ",
+        scan_insert: "Вметнете го првото шише",
+        scan_accepted: "+1 ПОЕН",
+        scan_rejected: "НЕ Е ПРИФАТЕНО",
+        scan_remove: "ВЕ МОЛИМЕ ОТСТРАНЕТЕ ГО ШИШЕТО",
+        btn_finish: "ЗАВРШИ",
+        summary_thanks: "ВИ БЛАГОДАРИМЕ!",
+        summary_total: "Вкупно освоени поени",
+        summary_success: "✅ Поените се додадени на вашата сметка!",
+        or:"или донирај:"        
+    }
+};
+function changeLanguage(lang) {
+    currentLang=lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        el.innerHTML = i18n[lang][key];
+    });
+    
+    // Save preference so it remembers on refresh
+    localStorage.setItem('preferredLang', lang);
+}
+let currentLang = 'mk';
+window.onload = function() {
+    changeLanguage(currentLang);
+};
+
+</script>
 </head>
 <body>
+    <div class="lang-switch">
+    <button class="lang-btn" onclick="changeLanguage('mk')"><img height="35" src="/static/mk.svg"/></button>
+    <button class="lang-btn" onclick="changeLanguage('en')"><img height="35" src="/static/en.svg"/></button>
+</div>
 
     <div id="view-maintenance" class="view">
         <h1 style="font-size: 5em;">⚠️</h1>
-        <h2>OUT OF SERVICE</h2>
-        <p>Connecting to camera system...</p>
+        <h2 data-i18n="maint_title">OUT OF SERVICE</h2>
+        <p data-i18n="maint_desc">Connecting to camera system...</p>
     </div>
 
     <div id="view-login" class="view">
@@ -68,43 +145,43 @@
         <div class="banner-slide" style="background-image: url('/static/banner3.svg');"></div>
     </div>
 
-    <h1 style="font-size: 3em; margin: 0;">Hello!</h1>
-    <p style="color: #888;">Ready to recycle?</p>
+    <h1 style="font-size: 3em; margin: 0;" data-i18n="login_hello">Hello!</h1>
+    <p style="color: #888;" data-i18n="login_ready">Ready to recycle?</p>
     
     <div class="card">
-        <p>Scan your <b>User ID</b></p>
+        <p data-i18n="login_scan">Scan your <b>User ID</b></p>
         <div style="font-size: 4em;">🪪</div>
     </div>
-  
-   <button class="btn-guest" onclick="startGuest()">Donate 1</button>
-    <button class="btn-guest" onclick="startGuest()">Donate 2</button>
-    <button class="btn-guest" onclick="startGuest()">Donate 3</button>
+   <p data-i18n="or">или</p>
+   <button class="btn-guest" onclick="startGuest()">1</button>
+    <button class="btn-guest" onclick="startGuest()">2</button>
+    <button class="btn-guest" onclick="startGuest()">3</button>
 
 </div>
 
     <div id="view-scan" class="view">
-        <div id="timer" class="timer">Session ends in: 05:00</div>
+        <div id="timer" class="timer" >05:00</div>
         
-        <div class="points-badge">Points: <span id="point-count">0</span></div>
+        <div class="points-badge"><span data-i18n="scan_points">Points:</span> <span id="point-count">0</span></div>
 
         <div id="display-area" style="flex-grow: 1; display: flex; align-items: center; width: 100%; justify-content: center;">
             <div class="card" id="current-card">
-                <h2>READY TO SCAN</h2>
-                <p>Insert your first bottle</p>
+                <h2 data-i18n="scan_ready">READY TO SCAN</h2>
+                <p data-i18n="scan_insert">Insert your first bottle</p>
             </div>
         </div>
         
-        <button class="btn-finish" onclick="resetSession()">FINISH</button>
+        <button data-i18n="btn_finish" class="btn-finish" onclick="resetSession()">FINISH</button>
     </div>
     <div id="view-summary" class="view">
     <h1 style="font-size: 4em;">🎉</h1>
-    <h1 style="color: var(--success); font-size: 3em; margin: 0;">THANK YOU!</h1>
+    <h1 data-i18n="summary_thanks" style="color: var(--success); font-size: 3em; margin: 0;">THANK YOU!</h1>
     
     <div class="card" style="margin-top: 30px;">
-        <p class="label">Total Points Earned</p>
+        <p class="label" data-i18n="summary_total">Total Points Earned</p>
         <div style="font-size: 5em; font-weight: bold; color: var(--accent);" id="final-points">0</div>
         
-        <div id="user-msg" style="margin-top: 20px; padding: 15px; background: #222; border-radius: 10px; display: none;">
+        <div data-i18n="summary_success" id="user-msg" style="margin-top: 20px; padding: 15px; background: #222; border-radius: 10px; display: none;">
             ✅ Points have been added to your account!
         </div>
     </div>
@@ -152,26 +229,27 @@
         });
 
         socket.on('new_item', (data) => {
-            resetTimer(); 
-            const area = document.getElementById('current-card');
-            
-            if (data.accepted) {
-                document.getElementById('point-count').innerText = data.total_points;
-                area.innerHTML = `
-                    <h3 style="color:var(--success)">+1 POINT</h3>
-                    <h1 style="margin: 10px 0;">${data.name}</h1>
-                    <p style="color: #666;">${data.barcode}</p>
-                `;
-            } else {
-                area.innerHTML = `
-                    <div class="cross">✕</div>
-                    <h2 style="color:var(--danger)">NOT ACCEPTED</h2>
-                    <div style="background: white; color: black; padding: 15px; border-radius: 10px; font-weight: bold; margin: 10px 0;">
-                        PLEASE REMOVE BOTTLE
-                    </div>
-                `;
-            }
-        });
+    resetTimer(); 
+    const area = document.getElementById('current-card');
+    const lang = i18n[currentLang]; // Get current dictionary
+    
+    if (data.accepted) {
+        document.getElementById('point-count').innerText = data.total_points;
+        area.innerHTML = `
+            <h3 style="color:var(--success)">${lang.scan_accepted}</h3>
+            <h1 style="margin: 10px 0;">${data.name}</h1>
+            <p style="color: #666;">${data.barcode}</p>
+        `;
+    } else {
+        area.innerHTML = `
+            <div class="cross">✕</div>
+            <h2 style="color:var(--danger)">${lang.scan_rejected}</h2>
+            <div style="background: white; color: black; padding: 15px; border-radius: 10px; font-weight: bold; margin: 10px 0;">
+                ${lang.scan_remove}
+            </div>
+        `;
+    }
+});
 
         socket.on('session_end', () => {
             clearInterval(countdownInterval);
@@ -193,7 +271,7 @@
                 let mins = Math.floor(timeLeft / 60);
                 let secs = timeLeft % 60;
                 document.getElementById('timer').innerText =
-                    `Session ends in: ${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                    `${i18n[currentLang]['scan_timer']} ${mins}:${secs < 10 ? '0' : ''}${secs}`;
                 
                 if (timeLeft <= 0) {
                     clearInterval(countdownInterval);

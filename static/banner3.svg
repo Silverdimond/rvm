@@ -14,8 +14,8 @@
   <path d="M250 150 L250 120 Q250 100 270 100 L330 100 Q350 100 350 120 L350 150 L370 150 L370 300 Q370 320 350 320 L250 320 Q230 320 230 300 L230 150 Z" fill="none" stroke="white" stroke-width="8" />
   <path d="M270 100 L270 80 L330 80 L330 100" fill="none" stroke="white" stroke-width="8" />
   
-  <text x="450" y="180" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="white">RECYCLE &amp; REWARD</text>
-  <text x="450" y="250" font-family="Arial, sans-serif" font-size="36" fill="#e0f2f1">Turn your empty plastic bottles and cans into instant credit.</text>
+  <text x="450" y="180" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="white">RECYCLE &amp; DONATE</text>
+  <text x="450" y="250" font-family="Arial, sans-serif" font-size="36" fill="#e0f2f1">Help someone with your empty plastic bottles and cans.</text>
   
   <rect x="1450" y="150" width="350" height="100" rx="50" fill="white" />
   <text x="1625" y="212" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#2e7d32" text-anchor="middle">START HERE</text>

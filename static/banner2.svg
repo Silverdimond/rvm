@@ -1,26 +1,27 @@
-<svg width="1920" height="510" viewBox="0 0 1920 510" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1920" height="510" fill="url(#paint0_linear)"/>
+<svg width="1920" height="400" viewBox="0 0 1920 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1920" height="400" fill="url(#paint0_linear)"/>
   
-  <circle cx="1800" cy="510" r="300" fill="#2ECC71" fill-opacity="0.2"/>
-  <circle cx="1700" cy="560" r="200" fill="#27AE60" fill-opacity="0.3"/>
+  <circle cx="1800" cy="400" r="300" fill="#2ECC71" fill-opacity="0.2"/>
+  <circle cx="1700" cy="450" r="200" fill="#27AE60" fill-opacity="0.3"/>
   
-  <text fill="white" xml:space="preserve" style="white-space: pre" font-family="Arial, sans-serif" font-size="80" font-weight="bold" letter-spacing="0.02em"><tspan x="120" y="220">RECYCLE HERE.</tspan></text>
-  <text fill="#E0E0E0" xml:space="preserve" style="white-space: pre" font-family="Arial, sans-serif" font-size="32" font-weight="500"><tspan x="120" y="280">Insert your empty bottles and cans to receive your reward.</tspan></text>
+  <text fill="white" xml:space="preserve" style="white-space: pre" font-family="Arial, sans-serif" font-size="80" font-weight="bold" letter-spacing="0.02em"><tspan x="120" y="160">RECYCLE HERE.</tspan></text>
   
-  <rect x="120" y="325" width="320" height="70" rx="35" fill="#FFFFFF"/>
-  <text fill="#1B4F72" xml:space="preserve" style="white-space: pre" font-family="Arial, sans-serif" font-size="24" font-weight="bold"><tspan x="185" y="368">GET STARTED</tspan></text>
+  <text fill="#E0E0E0" xml:space="preserve" style="white-space: pre" font-family="Arial, sans-serif" font-size="32" font-weight="500"><tspan x="120" y="220">Insert your empty bottles and cans to receive your reward.</tspan></text>
+  
+  <rect x="120" y="265" width="320" height="70" rx="35" fill="#FFFFFF"/>
+  <text fill="#1B4F72" xml:space="preserve" style="white-space: pre" font-family="Arial, sans-serif" font-size="24" font-weight="bold"><tspan x="185" y="308">GET STARTED</tspan></text>
 
-  <g transform="translate(1450, 130) scale(1.5)">
+  <g transform="translate(1450, 80) scale(1.5)">
     <path d="M40 120 V50 Q40 30 60 30 H70 Q90 30 90 50 V120 H40Z" stroke="white" stroke-width="6" fill="none" opacity="0.8"/>
     <path d="M60 30 V15 H70 V30" stroke="white" stroke-width="6" fill="none" opacity="0.8"/>
     <rect x="110" y="50" width="50" height="70" rx="8" stroke="white" stroke-width="6" fill="none" opacity="0.8"/>
     <line x1="110" y1="65" x2="160" y2="65" stroke="white" stroke-width="4" opacity="0.8"/>
   </g>
 
-  <path d="M1100 255 L1130 205 L1160 255 M1130 205 V305" stroke="white" stroke-width="12" stroke-linecap="round" opacity="0.1"/>
+  <path d="M1100 200 L1130 150 L1160 200 M1130 150 V250" stroke="white" stroke-width="12" stroke-linecap="round" opacity="0.1"/>
 
   <defs>
-    <linearGradient id="paint0_linear" x1="0" y1="0" x2="1920" y2="510" gradientUnits="userSpaceOnUse">
+    <linearGradient id="paint0_linear" x1="0" y1="0" x2="1920" y2="400" gradientUnits="userSpaceOnUse">
       <stop stop-color="#1B4F72"/>
       <stop offset="1" stop-color="#2196F3"/>
     </linearGradient>
