@@ -31,7 +31,7 @@ def on_activate(data):
     print("Pin 17 HIGH")
     
     # 2. Wait 1 second
-    time.sleep(1)
+    time.sleep(2)
     
     # 3. Set Pin 17 Low
     GPIO.output(PIN_MOTOR, GPIO.LOW)
