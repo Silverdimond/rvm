@@ -1,0 +1,8 @@
+flask
+flask-socketio
+eventlet
+requests
+opencv-python
+numpy
+pyzbar
+python-socketio[client]
