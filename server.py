@@ -109,6 +109,7 @@ def start_guest():
     global current_user, session_points
     current_user = "GUEST"
     session_points = 0
+    last_activity = time.time()
     socketio.emit('login_success', {'user_id': 'GUEST'})
     return jsonify({"status": "guest_started"}), 200
 
